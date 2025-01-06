@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $data['email'] ?? null;
     $password = $data['password'] ?? null;
 
-    //validation for login input
+    //validation for login inputs
     if (!$email || !$password) {
         $response = [
             'status' => 'error',
