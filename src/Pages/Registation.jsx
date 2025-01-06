@@ -1,9 +1,67 @@
+import axios from "axios";
+import { useState } from "react";
+import { toast } from "react-toastify";
+
 export default function Registation({ onClose }) {
+  const [regData, setRegData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+  const HandelChange = e => {
+    const { name, value } = e.target;
+    setRegData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    axios
+      .post(
+        "http://localhost/CineRental-React/Server/registation.php",
+        JSON.stringify(regData),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(response => {
+        // console.log("Response:", response.data);
+        toast.success(
+          ` ${
+            response.data.data.firstName + " Registered Succesfully" ||
+            response.data.message
+          } `
+        );
+        if (response.data.status === "success") {
+          onClose();
+        }
+      })
+      .catch(error => {
+        console.error("Error:", error);
+      });
+  };
+
+  console.log("regData", regData);
+
   return (
     <>
       <div className="fixed top-0 left-0 w-screen h-screen z-50 bg-black/60 backdrop-blur-sm">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[420px] sm:max-w-[600px] lg:max-w-[790px] p-4 max-h-[90vh] overflow-auto">
           <div className="bg-white shadow-md dark:bg-[#12141D] rounded-2xl overflow-hidden p-5 md:p-9">
+            <div className="text-end">
+              <button onClick={onClose}>
+                <img
+                  className="text-red-600"
+                  src="/src/assets/close.svg"
+                  width="26"
+                  height="26"
+                  alt="logo"
+                />
+              </button>
+            </div>
+
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
               <img
                 alt="Your Company"
@@ -16,11 +74,7 @@ export default function Registation({ onClose }) {
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-              <form
-                action="registation.php"
-                method="POST"
-                className="space-y-6"
-              >
+              <form onSubmit={handleSubmit} method="POST" className="space-y-6">
                 <div className=" flex justify-between">
                   <div>
                     <label
@@ -31,10 +85,10 @@ export default function Registation({ onClose }) {
                     </label>
                     <div className="mt-2">
                       <input
-                        id="first_name"
-                        name="firstname"
+                        name="firstName"
+                        value={regData.firstName}
+                        onChange={HandelChange}
                         type="text"
-                        required
                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                       />
                     </div>
@@ -48,8 +102,9 @@ export default function Registation({ onClose }) {
                     </label>
                     <div className="mt-2">
                       <input
-                        id="last_name"
-                        name="lastname"
+                        name="lastName"
+                        value={regData.lastName}
+                        onChange={HandelChange}
                         type="text"
                         required
                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
@@ -68,6 +123,8 @@ export default function Registation({ onClose }) {
                     <input
                       id="email"
                       name="email"
+                      value={regData.email}
+                      onChange={HandelChange}
                       type="email"
                       required
                       autoComplete="email"
@@ -95,11 +152,10 @@ export default function Registation({ onClose }) {
                   </div>
                   <div className="mt-2">
                     <input
-                      id="password"
                       name="password"
+                      value={regData.password}
+                      onChange={HandelChange}
                       type="password"
-                      required
-                      autoComplete="current-password"
                       className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     />
                   </div>
@@ -125,7 +181,6 @@ export default function Registation({ onClose }) {
                 </a>
               </p>
             </div>
-            <button onClick={onClose}>Close</button>
           </div>
         </div>
       </div>

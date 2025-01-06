@@ -17,6 +17,7 @@ function App() {
           <ToastContainer />
         </MovieContext.Provider>
       </ThemeContext.Provider>
+      
     </>
   );
 }

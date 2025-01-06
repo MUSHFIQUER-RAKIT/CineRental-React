@@ -1,9 +1,63 @@
-export default function Login({ onClose }) {
+import axios from "axios";
+import { useState } from "react";
+import { toast } from "react-toastify";
+
+export default function Login({ onClose, setIsLoginBtn, setProfile }) {
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setLoginData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    axios
+      .post(
+        "http://localhost/CineRental-React/Server/login.php",
+        JSON.stringify(loginData),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(response => {
+        // console.log("Response:", response.data.data.firstName);
+        if (response.data.status === "success") {
+          toast.success("Login successful!");
+          onClose();
+          setIsLoginBtn(false);
+          setProfile(response.data.data.firstName);
+        } else {
+          toast.error(response.data.message || "Login failed!");
+        }
+      })
+      .catch(error => {
+        console.error("Login error:", error);
+        toast.error("An error occurred while logging in.");
+      });
+  };
+
   return (
     <>
       <div className="fixed top-0 left-0 w-screen h-screen z-50 bg-black/60 backdrop-blur-sm">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[420px] sm:max-w-[600px] lg:max-w-[790px] p-4 max-h-[90vh] overflow-auto">
           <div className="bg-white shadow-md dark:bg-[#12141D] rounded-2xl overflow-hidden p-5 md:p-9">
+            <div className="text-end">
+              <button onClick={onClose}>
+                <img
+                  className="text-red-600"
+                  src="/src/assets/close.svg"
+                  width="26"
+                  height="26"
+                  alt="logo"
+                />
+              </button>
+            </div>
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
               <img
                 alt="Your Company"
@@ -16,7 +70,7 @@ export default function Login({ onClose }) {
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-              <form action="login.php" method="POST" className="space-y-6">
+              <form onSubmit={handleSubmit} method="POST" className="space-y-6">
                 <div>
                   <label
                     htmlFor="email"
@@ -28,8 +82,9 @@ export default function Login({ onClose }) {
                     <input
                       id="email"
                       name="email"
+                      value={loginData.email}
+                      onChange={handleChange}
                       type="email"
-                      required
                       autoComplete="email"
                       className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     />
@@ -57,8 +112,9 @@ export default function Login({ onClose }) {
                     <input
                       id="password"
                       name="password"
+                      value={loginData.password}
+                      onChange={handleChange}
                       type="password"
-                      required
                       autoComplete="current-password"
                       className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     />
@@ -85,7 +141,6 @@ export default function Login({ onClose }) {
                 </a>
               </p>
             </div>
-            <button onClick={onClose}>Close</button>
           </div>
         </div>
       </div>

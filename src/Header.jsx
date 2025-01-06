@@ -15,6 +15,9 @@ export default function Header() {
   const { darkMode, setDarkMode } = useContext(ThemeContext);
   const [isLogin, setIsLogin] = useState(false);
   const [isRegistation, setIsRegistation] = useState(false);
+  const [isLoginBtn, setIsLoginBtn] = useState(true);
+
+  const [profile, setProfile] = useState("");
 
   function handleLogin() {
     setIsLogin(true);
@@ -30,7 +33,13 @@ export default function Header() {
   return (
     <header>
       {showCart && <CartDetails onClose={() => setShowCart(false)} />}
-      {isLogin && <Login onClose={() => setIsLogin(false)} />}
+      {isLogin && (
+        <Login
+          onClose={() => setIsLogin(false)}
+          setIsLoginBtn={setIsLoginBtn}
+          setProfile={setProfile}
+        />
+      )}
       {isRegistation && <Registation onClose={() => setIsRegistation(false)} />}
       <nav className="container flex items-center justify-between space-x-10 py-6">
         <a href="index.html">
@@ -38,16 +47,25 @@ export default function Header() {
         </a>
 
         <ul className="flex items-center space-x-5">
-          <li className="bg-primary/20 dark:bg-primary/[7%] p-1 inline-block  rounded text-[#12CF6F]">
-            <a href="#" onClick={handleLogin}>
-              Login
-            </a>
-          </li>
-          <li className="bg-primary/20 dark:bg-primary/[7%] p-1 inline-block  rounded text-[#12CF6F]">
-            <a href="#" onClick={handleRegistation}>
-              Sign up
-            </a>
-          </li>
+          {isLoginBtn ? (
+            <>
+              <li className="bg-primary/20 dark:bg-primary/[7%] p-1 inline-block  rounded text-[#12CF6F]">
+                <a href="#" onClick={handleLogin}>
+                  Login
+                </a>
+              </li>
+              <li className="bg-primary/20 dark:bg-primary/[7%] p-1 inline-block  rounded text-[#12CF6F]">
+                <a href="#" onClick={handleRegistation}>
+                  Sign up
+                </a>
+              </li>
+            </>
+          ) : (
+            <div className="bg-primary/20 dark:bg-primary/[7%] p-1 inline-block  rounded text-[#12CF6F]">
+              {profile}
+            </div>
+          )}
+
           <li>
             <a
               className="bg-primary/20 dark:bg-primary/[7%] rounded-lg backdrop-blur-[2px] p-1 inline-block"
